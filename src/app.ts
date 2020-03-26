@@ -7,15 +7,12 @@ import { VirtualBrowser } from "./util/VirtualBrowser";
 const virtualBrowser = new VirtualBrowser();
 const mqttClient = connect(MQTT_BROKER);
 
-const chronodrive = new Chronodrive(virtualBrowser, {
-    drive: CHRONO_DRIVE,
-    username: CHRONO_USER,
-    password: CHRONO_PASS
-});
+const chronodrive = new Chronodrive(virtualBrowser);
 const ha = new HomeAssistant(mqttClient);
 
 (async () => {
-    await chronodrive.connect();
+    await chronodrive.selectStore(CHRONO_DRIVE);
+    await chronodrive.connect(CHRONO_USER, CHRONO_PASS);
     await ha.setupSensor("chronodrive");
 
     const check = true;
