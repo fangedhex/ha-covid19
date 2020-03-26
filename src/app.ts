@@ -23,7 +23,7 @@ import { launch } from "puppeteer";
 
     const check = true;
     while (check) {
-        const state: boolean = await chronodrive.check_state();
+        const state = await chronodrive.check_state();
         await ha.updateSensor("chronodrive", state);
     }
 })();

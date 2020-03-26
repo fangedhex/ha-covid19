@@ -44,7 +44,7 @@ export class Chronodrive {
             .then((message) => {
                 if (message) {
                     debug("Status : " + message);
-                    return message != "Pas de créneaux disponibles";
+                    return message != "Pas de créneau disponible";
                 } else {
                     return Promise.reject();
                 }
