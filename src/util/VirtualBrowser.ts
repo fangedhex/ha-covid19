@@ -3,25 +3,13 @@ import { CHROMIUM_OPTS } from "../env.config";
 import Bottleneck from "bottleneck";
 
 export class VirtualBrowser {
-    private bottleneck!: Bottleneck;
-    private chromium!: Browser;
-    private currentPage!: Page;
+    private bottleneck: Bottleneck;
 
-    private checkVars() {
-        return (async () => {
-            this.bottleneck = new Bottleneck({
-                maxConcurrent: 1,
-                minTime: 300
-            });
-
-            this.chromium = await launch({
-                args: CHROMIUM_OPTS
-            });
-
-            this.currentPage = await this.chromium.newPage();
-
-            return Promise.resolve();
-        }).bind(this)();
+    constructor(private currentPage: Page) {
+        this.bottleneck = new Bottleneck({
+            maxConcurrent: 1,
+            minTime: 300
+        });
     }
 
     /**
@@ -29,8 +17,7 @@ export class VirtualBrowser {
      * @param url
      */
     public goto(url: string) {
-        return this.bottleneck.schedule(() => this.checkVars())
-            .then(() => this.currentPage.goto(url));
+        return this.bottleneck.schedule(() => this.currentPage.goto(url));
     }
 
     /**
@@ -39,14 +26,13 @@ export class VirtualBrowser {
      * @param value
      */
     public input(selector: string, value: string) {
-        return this.bottleneck.schedule(() => this.checkVars())
-            .then(() => {
-                return this.currentPage.$eval(selector, (element) => {
-                    if (element instanceof HTMLInputElement) {
-                        element.value = value;
-                    }
-                });
+        return this.bottleneck.schedule(() => {
+            return this.currentPage.$eval(selector, (element) => {
+                if (element instanceof HTMLInputElement) {
+                    element.value = value;
+                }
             });
+        });
     }
 
     /**
@@ -55,10 +41,9 @@ export class VirtualBrowser {
      * @param pageFunction
      */
     public eval<R>(selector: string, pageFunction: (element: Element) => R | Promise<R>) {
-        return this.bottleneck.schedule(() => this.checkVars())
-            .then(() => {
-                return this.currentPage.$eval(selector, pageFunction);
-            })
+        return this.bottleneck.schedule(() => {
+            return this.currentPage.$eval(selector, pageFunction);
+        })
     }
 
     /**
@@ -66,8 +51,7 @@ export class VirtualBrowser {
      * @param selector
      */
     public clickOn(selector: string) {
-        return this.bottleneck.schedule(() => this.checkVars())
-            .then(() => {
+        return this.bottleneck.schedule(() => {
             return this.currentPage.click(selector);
         })
     }
@@ -76,7 +60,6 @@ export class VirtualBrowser {
      * Refresh the current page
      */
     public refresh() {
-        return this.bottleneck.schedule(() => this.checkVars())
-            .then(() => this.currentPage.reload());
+        return this.bottleneck.schedule(() => this.currentPage.reload());
     }
 }
