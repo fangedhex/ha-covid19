@@ -27,11 +27,11 @@ export class VirtualBrowser {
      */
     public input(selector: string, value: string) {
         return this.bottleneck.schedule(() => {
-            return this.currentPage.$eval(selector, (element) => {
+            return this.currentPage.$eval(selector, (element, value) => {
                 if (element instanceof HTMLInputElement) {
                     element.value = value;
                 }
-            });
+            }, value);
         });
     }
 
