@@ -3,9 +3,9 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v1
-        - name: Install dependencies
-          run: npm install
-        - name: Run tests
-          run: npm run test
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm run test
