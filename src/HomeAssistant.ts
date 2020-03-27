@@ -2,7 +2,7 @@ const debug = require("debug")("ha-covid19:mqtt");
 import {AsyncMqttClient, connect} from "async-mqtt";
 
 export class HomeAssistant {
-    private states: Map<string, boolean>;
+    private states: Map<string, boolean | undefined>;
 
     public constructor(private mqttClient: AsyncMqttClient) {
         this.states = new Map();
@@ -17,8 +17,6 @@ export class HomeAssistant {
 
         const json = JSON.stringify(config);
         debug("Setting up sensor : %O", json);
-
-        this.states.set(name, false);
 
         return this.mqttClient.publish(`homeassistant/binary_sensor/${name}/config`, json);
     }

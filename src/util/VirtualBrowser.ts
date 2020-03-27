@@ -1,5 +1,4 @@
-import { Browser, Page, launch } from "puppeteer";
-import { CHROMIUM_OPTS } from "../env.config";
+import { Page } from "puppeteer";
 import Bottleneck from "bottleneck";
 
 export class VirtualBrowser {
@@ -8,8 +7,16 @@ export class VirtualBrowser {
     constructor(private currentPage: Page) {
         this.bottleneck = new Bottleneck({
             maxConcurrent: 1,
-            minTime: 300
+            minTime: 400
         });
+    }
+
+    /**
+     * Sleep for a duration
+     * @param duration
+     */
+    public sleep(duration: number) {
+        return this.bottleneck.schedule(() => this.currentPage.waitFor(duration));
     }
 
     /**
